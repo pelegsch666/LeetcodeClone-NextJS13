@@ -1,14 +1,13 @@
 import assert from 'assert';
 import { Problem } from '../types/problem';
 
-
-
 const starterCodeTwoSum = `function twoSum(nums,target){
     // write your code here
 };`;
 // checks if the user has the correct answer
-const handlerTwoSum = (fn: any) => {
+async function handlerTwoSum(fn: any) {
   // fn is the callback that users code passed into
+  'use server'
   try {
     const nums = [
       [2, 7, 11, 15],
@@ -32,7 +31,7 @@ const handlerTwoSum = (fn: any) => {
     console.log('twoSum handler function error');
     throw new Error(error);
   }
-};
+}
 
 export const twoSum: Problem = {
   id: 'two-sum',

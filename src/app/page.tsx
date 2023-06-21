@@ -36,6 +36,9 @@ export default function Home() {
       <ProblemsTable />
     </table>
     </div>
+    {/* Temp Form */}
+    <form action=""></form>
+
     </main>
   );
 }

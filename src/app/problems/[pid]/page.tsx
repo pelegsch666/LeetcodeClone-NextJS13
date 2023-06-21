@@ -1,4 +1,3 @@
-
 import Topbar from '@/app/components/Topbar/Topbar';
 import Workspace from '@/app/components/Workspace/Workspace';
 import { problems } from '@/app/utils/problems';
@@ -17,7 +16,7 @@ async function ProblemPage ({
   return (
     <div>
       <Topbar problemPage />
-      <Workspace />
+      <Workspace problem={problem}/>
     </div>
   );
 };
