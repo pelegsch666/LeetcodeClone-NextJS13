@@ -13,7 +13,7 @@ const Workspace = ({problem}:WorkspaceProps) => {
     <Split className="split" minSize={0}>
       <ProblemDescription problem={problem}/>
       <div className='bg-dark-fill-2'>
-      <Playground />
+      <Playground  problem={problem}/>
       </div>
     </Split>
   );

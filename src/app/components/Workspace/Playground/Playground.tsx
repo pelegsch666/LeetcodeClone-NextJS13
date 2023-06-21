@@ -5,9 +5,12 @@ import CodeMirror from '@uiw/react-codemirror';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { javascript } from '@codemirror/lang-javascript';
 import EditorFooter from './EditorFooter';
-type PlaygroundProps = {};
+import { Problem } from '@/app/utils/types/problem';
+type PlaygroundProps = {
+  problem: Problem;
+};
 
-const Playground = (props: PlaygroundProps) => {
+const Playground = ({problem}: PlaygroundProps) => {
   const boilerPlate = `function twoSum(nums, target){
    // write your code here 
   };`;
@@ -21,7 +24,7 @@ const Playground = (props: PlaygroundProps) => {
         minSize={60}>
         <div className="w-full overflow-auto">
           <CodeMirror
-            value={boilerPlate}
+            value={problem.starterCode}
             theme={vscodeDark}
             extensions={[javascript()]}
             style={{ fontSize: 16 }}
