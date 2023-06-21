@@ -1,24 +1,50 @@
-'use client'
-import Topbar from '@/app/components/Topbar/Topbar'
-import Workspace from '@/app/components/Workspace/Workspace'
-import React from 'react'
 
-type ProblemPageProps = {}
+import Topbar from '@/app/components/Topbar/Topbar';
+import Workspace from '@/app/components/Workspace/Workspace';
+import { problems } from '@/app/utils/problems';
+import React from 'react';
+
+type ProblemPageProps = {};
 
 const ProblemPage = (props: ProblemPageProps) => {
   return (
     <div>
-      <Topbar problemPage/>
-       <Workspace />
+      <Topbar problemPage />
+      <Workspace />
     </div>
-  )
-}
+  );
+};
 
-export default ProblemPage
+export default ProblemPage;
 
 // fetch the local data
 // ssg - static site generation
 // getStaticPaths => it create the dynamic routes
 export async function getStaticPaths() {
-  const paths = Object.keys()
+  const paths = Object.keys(problems).map(key => ({
+    params: { pid: key },
+  }));
+
+  return {
+    paths,
+   
+  };
+}
+
+export async function getStaticProps({params} : {params:{pid: string}}){
+  const {pid} = params;
+  const problem = problems[pid];
+  if(!problem){
+    return{
+      notFound: true
+    }
+  }  
+
+ return {
+  props: {
+    problem
+  }
+ }
+
+
 }
