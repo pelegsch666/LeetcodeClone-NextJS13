@@ -5,13 +5,16 @@ import { AiFillYoutube } from 'react-icons/ai';
 import { BsCheckCircle } from 'react-icons/bs';
 import { IoClose } from 'react-icons/io5';
 import YouTube from 'react-youtube';
-type ProblemsTableProps = {};
+type ProblemsTableProps = {
+  setLoadingProblems: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-function ProblemsTable({}: ProblemsTableProps) {
+const ProblemsTable = ({ setLoadingProblems }: ProblemsTableProps) => {
   const [youtubePlayer, setYoutubePlayer] = useState({
     isOpen: false,
     videoId: '',
   });
+  const problems = useGetProblems()
   const closeModal = () => {
     setYoutubePlayer({ isOpen: false, videoId: '' });
   };
@@ -98,6 +101,6 @@ function ProblemsTable({}: ProblemsTableProps) {
       )}
     </>
   );
-}
+};
 
 export default ProblemsTable;
