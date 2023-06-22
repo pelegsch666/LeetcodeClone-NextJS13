@@ -1,6 +1,6 @@
 import { problems } from '@/mockProblems/problems';
 import Link from 'next/link';
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiFillYoutube } from 'react-icons/ai';
 import { BsCheckCircle } from 'react-icons/bs';
 import { IoClose } from 'react-icons/io5';
@@ -14,7 +14,7 @@ const ProblemsTable = ({ setLoadingProblems }: ProblemsTableProps) => {
     isOpen: false,
     videoId: '',
   });
-  const problems = useGetProblems()
+  const problems = useGetProblems(setLoadingProblems)
   const closeModal = () => {
     setYoutubePlayer({ isOpen: false, videoId: '' });
   };
@@ -104,3 +104,7 @@ const ProblemsTable = ({ setLoadingProblems }: ProblemsTableProps) => {
 };
 
 export default ProblemsTable;
+
+function useGetProblems(setLoadingProblems: ){
+
+}
