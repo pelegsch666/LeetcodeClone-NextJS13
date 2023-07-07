@@ -51,7 +51,7 @@ const ProblemsTable = ({ setLoadingProblems }: ProblemsTableProps) => {
                {problem.link ?  (<Link href={problem.link} className='hover:text-blue-600 cursor-pointer' target='_blank'>
                {problem.title}
                </Link>): (<Link
-               className='hover:text-blue-600 cursor-pointer' href={`/problems${problem.id}`}
+               className='hover:text-blue-600 cursor-pointer' href={`/problems/${problem.id}`}
                >
                {problem.title}
                </Link>
