@@ -7,6 +7,7 @@ import {
   AiFillLike,
   AiFillDislike,
   AiOutlineLoading3Quarters,
+  AiFillStar,
 } from 'react-icons/ai';
 import { BsCheck2Circle } from 'react-icons/bs';
 import { TiStarOutline } from 'react-icons/ti';
@@ -249,7 +250,9 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
                 <div
                   className="cursor-pointer hover:bg-dark-fill-3  rounded p-[3px]  ml-4 text-xl transition-colors duration-200 text-green-s text-dark-gray-6 "
                   onClick={handleStar}>
-                  <TiStarOutline />
+                  {starred && !updating && <AiFillStar className='text-dark-yellow'/>}
+                  {!starred && !updating && <TiStarOutline/>}
+                  {updating && <AiOutlineLoading3Quarters  className='animate-spin'/>}
                 </div>
               </div>
             )}
