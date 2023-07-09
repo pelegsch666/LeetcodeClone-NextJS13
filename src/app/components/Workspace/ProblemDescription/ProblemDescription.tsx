@@ -24,6 +24,7 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
     problem.id
   );
   const [user] = useAuthState(auth);
+  const [updating,setUpdating] = useState(false)
   const handleLike = async () => {
     if (!user) {
       toast.error('You must be logged in to like a problem', {
@@ -32,7 +33,8 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
       });
       return;
     }
-    // if already liked, if already disliked, neither
+    if(updating) return;
+     setUpdating(true)
     await runTransaction(firestore, async transaction => {
       const userRef = doc(firestore, 'users', user.uid);
       const problemRef = doc(firestore, 'problems', problem.id);
@@ -79,11 +81,12 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
           setCurrentProblem(prev => ({...prev,likes:prev.likes+1}))
           setData(prev => ({...prev,liked:true}))
         }
-        return;
+     
       }
+      setUpdating(false)
     });
   };
-
+   
   return (
     <div className="bg-dark-layer-1">
       {/* TAB */}
