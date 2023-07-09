@@ -1,6 +1,6 @@
 import { DBProblem, Problem } from '@/app/utils/types/problem';
 import { auth, firestore } from '@/firebase/firebase';
-import { Transaction, doc, getDoc, runTransaction } from 'firebase/firestore';
+import { Transaction, arrayRemove, arrayUnion, doc, getDoc, runTransaction, updateDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
@@ -33,7 +33,7 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
     const problemRef = doc(firestore, 'problems', problem.id);
     const userDoc = await transaction.get(userRef);
     const problemDoc = await transaction.get(problemRef);
-    return { userDoc, problemDoc, userRef,problemRef };
+    return { userDoc, problemDoc, userRef, problemRef };
   };
 
   const handleLike = async () => {
@@ -47,9 +47,8 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
     if (updating) return;
     setUpdating(true);
     await runTransaction(firestore, async transaction => {
-      const { problemDoc, userDoc, problemRef, userRef } = await returnUserDataAndProblemData(
-        transaction
-      );
+      const { problemDoc, userDoc, problemRef, userRef } =
+        await returnUserDataAndProblemData(transaction);
       if (userDoc.exists() || problemDoc.exists()) {
         if (liked) {
           // remove problem id from likedProblems on user doc, decrement likes on problem doc
@@ -68,9 +67,9 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
         } else if (disliked) {
           transaction.update(userRef, {
             likedProblems: [...userDoc.data().likedProblems, problem.id],
-            dislikedProblems: userDoc
+            dislikeProblems: userDoc
               .data()
-              .dislikedProblems.filter((id: string) => id !== problem.id),
+              .dislikeProblems.filter((id: string) => id !== problem.id),
           });
           transaction.update(problemRef, {
             likes: problemDoc.data().likes + 1,
@@ -113,22 +112,84 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
     if (updating) return;
     setUpdating(true);
     await runTransaction(firestore, async transaction => {
-      const { problemDoc, userDoc, userRef, problemRef } = await returnUserDataAndProblemData(transaction);
-      if(userDoc.exists() && problemDoc.exists()){
-        // alreay disliked already like 
-        if(disliked){
+      const { problemDoc, userDoc, userRef, problemRef } =
+        await returnUserDataAndProblemData(transaction);
+      if (userDoc.exists() && problemDoc.exists()) {
+        // alreay disliked already like
+        if (disliked) {
           transaction.update(userRef, {
-           dislikedProblems: userDoc.data().dislikedProblems.filter((id:string) => id !== problem.id)
-          })
+            dislikeProblems: userDoc
+              .data()
+              .dislikeProblems.filter((id: string) => id !== problem.id),
+          });
           transaction.update(problemRef, {
-            dislikes: problemDoc.data().dislikes -1
-          })
-          setCurrentProblem((perv) => perv ? {...perv,dislikes: perv.dislikes -1} : null );
-          setData((perv) => ({...perv,disliked: false}))
-        }
+            dislikes: problemDoc.data().dislikes - 1,
+          });
+          setCurrentProblem(perv =>
+            perv ? { ...perv, dislikes: perv.dislikes - 1 } : null
+          );
+          setData(perv => ({ ...perv, disliked: false }));
+        } else if (liked) {
+          transaction.update(userRef, {
+            dislikeProblems: [...userDoc.data().dislikeProblems, problem.id],
 
+            likedProblems: userDoc
+              .data()
+              .likedProblems.filter((id: string) => id !== problem.id),
+          });
+          transaction.update(problemRef, {
+            dislikes: problemDoc.data().dislikes - 1,
+            likes: problemDoc.data().likes - 1,
+          });
+          setCurrentProblem(perv =>
+            perv
+              ? { ...perv, dislikes: perv.dislikes + 1, likes: perv.likes - 1 }
+              : null
+          );
+          setData(perv => ({ ...perv, disliked: true, liked: false }));
+        } else {
+          transaction.update(userRef, {
+            dislikeProblems: [...userDoc.data().dislikeProblems, problem.id],
+          });
+          transaction.update(problemRef, {
+            dislikes: problemDoc.data().dislikes + 1,
+          });
+          setCurrentProblem(prev =>
+            prev ? { ...prev, dislikes: prev.dislikes + 1 } : null
+          );
+          setData(prev => ({ ...prev, disliked: true }));
+        }
       }
     });
+    setUpdating(false);
+  };
+
+  const handleStar = async () => {
+    if (!user) {
+      toast.error('You must be logged in to star a problem', {
+        position: 'top-left',
+        theme: 'dark',
+      });
+      return;
+    }
+    if (updating) return;
+    setUpdating(true);
+    if (!starred) {
+      const useRef = doc(firestore, 'users', user.uid);
+      await updateDoc(
+        useRef,
+       { starredProblems: arrayUnion(problem.id)}
+      )
+      setData((prev) => ({...prev,starred: true}))
+    } else{
+      const userRef = doc(firestore, 'users', user.uid)
+      await updateDoc(userRef, {
+        starredProblems: arrayRemove(problem.id)
+      })
+      setData((prev) => ({...prev,starred: false}))
+    }
+
+    setUpdating(false);
   };
 
   return (
@@ -176,10 +237,18 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
                 <div
                   className="flex items-center cursor-pointer hover:bg-dark-fill-3 space-x-1 rounded p-[3px]  ml-4 text-lg transition-colors duration-200 text-green-s text-dark-gray-6"
                   onClick={handleDislike}>
-                  <AiFillDislike />
+                  {disliked && !updating && (
+                    <AiFillDislike className="text-dark-blue-s" />
+                  )}
+                  {!disliked && !updating && <AiFillDislike />}
+                  {updating && (
+                    <AiOutlineLoading3Quarters className="animate-spin" />
+                  )}
                   <span className="text-xs">{currentProblem.dislikes}</span>
                 </div>
-                <div className="cursor-pointer hover:bg-dark-fill-3  rounded p-[3px]  ml-4 text-xl transition-colors duration-200 text-green-s text-dark-gray-6 ">
+                <div
+                  className="cursor-pointer hover:bg-dark-fill-3  rounded p-[3px]  ml-4 text-xl transition-colors duration-200 text-green-s text-dark-gray-6 "
+                  onClick={handleStar}>
                   <TiStarOutline />
                 </div>
               </div>
@@ -296,12 +365,12 @@ function useGetUsersDataOnProblem(id: string) {
         const {
           solvedProblems,
           likedProblems,
-          dislikedProblems,
+          dislikeProblems,
           starredProblems,
         } = data;
         setData({
           liked: likedProblems.includes(id), // likedProblems ["two-sum","jump-game"]
-          disliked: dislikedProblems?.includes(id),
+          disliked: dislikeProblems?.includes(id),
           starred: starredProblems?.includes(id),
           solved: solvedProblems?.includes(id),
         });
