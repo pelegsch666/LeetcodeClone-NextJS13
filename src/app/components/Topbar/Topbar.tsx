@@ -23,10 +23,10 @@ const Topbar = ({ problemPage, pid }: TopbarProps) => {
   const [user] = useAuthState(auth);
   const setAuthModalState = useSetRecoilState(authModalState);
   const router = useRouter();
-  const currUrlId = pid;
+  const currUrlId =  pid ;
 
   const handleProblemhange = (isForward: boolean) => {
-    const { order } = problems[currUrlId];
+    const { order } =  problems[currUrlId] ;
     const direction = isForward ? 1 : -1;
     const nextProblemOrder = order + direction;
     const nextProblemKey = problemIds.find(
