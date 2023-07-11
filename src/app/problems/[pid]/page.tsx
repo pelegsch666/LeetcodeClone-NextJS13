@@ -1,3 +1,4 @@
+
 import Topbar from '@/app/components/Topbar/Topbar';
 import Workspace from '@/app/components/Workspace/Workspace';
 import { problems } from '@/app/utils/problems';
@@ -12,10 +13,11 @@ async function ProblemPage ({
   params: { pid: string }
 }) {
  const problem = problems[pid];
-  console.log(problem)
+
+  
   return (
     <div>
-      <Topbar problemPage />
+      <Topbar problemPage pid={pid}/>
       <Workspace problem={problem}/>
     </div>
   );

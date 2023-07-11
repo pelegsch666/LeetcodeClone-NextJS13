@@ -1,6 +1,14 @@
 import { DBProblem, Problem } from '@/app/utils/types/problem';
 import { auth, firestore } from '@/firebase/firebase';
-import { Transaction, arrayRemove, arrayUnion, doc, getDoc, runTransaction, updateDoc } from 'firebase/firestore';
+import {
+  Transaction,
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  runTransaction,
+  updateDoc,
+} from 'firebase/firestore';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
@@ -177,17 +185,14 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
     setUpdating(true);
     if (!starred) {
       const useRef = doc(firestore, 'users', user.uid);
-      await updateDoc(
-        useRef,
-       { starredProblems: arrayUnion(problem.id)}
-      )
-      setData((prev) => ({...prev,starred: true}))
-    } else{
-      const userRef = doc(firestore, 'users', user.uid)
+      await updateDoc(useRef, { starredProblems: arrayUnion(problem.id) });
+      setData(prev => ({ ...prev, starred: true }));
+    } else {
+      const userRef = doc(firestore, 'users', user.uid);
       await updateDoc(userRef, {
-        starredProblems: arrayRemove(problem.id)
-      })
-      setData((prev) => ({...prev,starred: false}))
+        starredProblems: arrayRemove(problem.id),
+      });
+      setData(prev => ({ ...prev, starred: false }));
     }
 
     setUpdating(false);
@@ -220,9 +225,11 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
                   className={`${problemDifficultyClass} inline-block rounded-[21px] bg-opacity-[.15] px-2.5 py-1 text-xs font-medium capitalize `}>
                   {currentProblem.difficulty}
                 </div>
-                <div className="rounded p-[3px] ml-4 text-lg transition-colors duration-200 text-green-s text-dark-green-s">
-                  <BsCheck2Circle />
-                </div>
+                {solved && (
+                  <div className="rounded p-[3px] ml-4 text-lg transition-colors duration-200 text-green-s text-dark-green-s">
+                    <BsCheck2Circle />
+                  </div>
+                )}
                 <div
                   className="flex items-center cursor-pointer hover:bg-dark-fill-3 space-x-1 rounded p-[3px]  ml-4 text-lg transition-colors duration-200 text-dark-gray-6"
                   onClick={handleLike}>
@@ -250,9 +257,13 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
                 <div
                   className="cursor-pointer hover:bg-dark-fill-3  rounded p-[3px]  ml-4 text-xl transition-colors duration-200 text-green-s text-dark-gray-6 "
                   onClick={handleStar}>
-                  {starred && !updating && <AiFillStar className='text-dark-yellow'/>}
-                  {!starred && !updating && <TiStarOutline/>}
-                  {updating && <AiOutlineLoading3Quarters  className='animate-spin'/>}
+                  {starred && !updating && (
+                    <AiFillStar className="text-dark-yellow" />
+                  )}
+                  {!starred && !updating && <TiStarOutline />}
+                  {updating && (
+                    <AiOutlineLoading3Quarters className="animate-spin" />
+                  )}
                 </div>
               </div>
             )}

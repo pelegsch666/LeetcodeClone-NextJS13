@@ -1,21 +1,8 @@
 import assert from "assert";
 import { Problem } from "../types/problem";
+import { validParenthesesHandler } from "./problemsFunction";
 
-export const validParenthesesHandler = async (fn: any) => {
-	'use server'
-	try {
-		const tests = ["()", "()[]{}", "(]", "([)]", "{[]}"];
-		const answers = [true, true, false, false, true];
-		for (let i = 0; i < tests.length; i++) {
-			const result = fn(tests[i]);
-			assert.deepEqual(result, answers[i]);
-		}
-		return true;
-	} catch (error: any) {
-		console.error("Error from validParenthesesHandler: ", error);
-		throw new Error(error);
-	}
-};
+
 
 const starterCodeValidParenthesesJS = `function validParentheses(s) {
   // Write your code here
