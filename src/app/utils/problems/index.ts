@@ -17,3 +17,4 @@ export const problems: ProblemMap = {
   'valid-parentheses': validParentheses,
  
 };
+export const problemIds = Object.keys(problems);

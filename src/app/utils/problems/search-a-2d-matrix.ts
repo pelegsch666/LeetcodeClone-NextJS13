@@ -2,39 +2,9 @@ import assert from "assert";
 import { Problem } from "../types/problem";
 import example1 from "./images/search-a-2d-1.jpg";
 import example2 from "./images/search-a-2d-2.jpg";
+import { search2DMatrixHandler } from "./problemsFunction";
 
-export const search2DMatrixHandler = async (fn: any) => {
-	'use server'
-	try {
-		const tests = [
-			{
-				matrix: [
-					[1, 3, 5, 7],
-					[10, 11, 16, 20],
-					[23, 30, 34, 60],
-				],
-				target: 3,
-			},
-			{
-				matrix: [
-					[1, 3, 5, 7],
-					[10, 11, 16, 20],
-					[23, 30, 34, 60],
-				],
-				target: 13,
-			},
-		];
-		const answers = [true, false];
-		for (let i = 0; i < tests.length; i++) {
-			const result = fn(tests[i].matrix, tests[i].target);
-			assert.deepEqual(result, answers[i]);
-		}
-		return true;
-	} catch (error: any) {
-		console.log("Error from searchA2DMatrixHandler: ", error);
-		throw new Error(error);
-	}
-};
+
 const starterCodeSearch2DMatrixJS = `// Do not edit function name
 function searchMatrix(matrix, target) {
   // Write your code here
